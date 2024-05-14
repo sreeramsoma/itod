@@ -85,7 +85,9 @@ public class App {
 
     private static boolean isImageFile(File file) {
         String extension = FilenameUtils.getExtension(file.getName()).toLowerCase();
-        return extension.equals("jpg") || extension.equals("jpeg") || extension.equals("PNG") || extension.equals("gif") || extension.equals("bmp");
+        
+    
+        return extension.equals("jpg") || extension.equals("jpeg") || extension.equals("gif") || extension.equals("bmp") ||  extension.equals("png") ;
     }
 
     private static int getPictureType(File file) {
