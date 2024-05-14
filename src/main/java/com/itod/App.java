@@ -30,14 +30,18 @@ public class App {
                 for (File file : listOfFiles) {
                     if (file.isFile() && isImageFile(file)) {
                         String title = getTitleFromFilename(file.getName());
+                        System.out.println("Adding title -" + title);
                         addTitleToDocument(doc, title);
                         XWPFParagraph paragraph = doc.createParagraph();
                         XWPFRun run = paragraph.createRun();
                         run.addBreak();
+                        System.out.println("Adding image");
+
                         try (FileInputStream is = new FileInputStream(file)) {
                             run.addPicture(is, getPictureType(file), file.getName(), Units.toEMU(500), Units.toEMU(500)); // Adjust image size as needed
                         }
                         addPageBreak(doc);
+                        System.out.println("Adding page break");
                     }
                 }
             }
