@@ -80,7 +80,7 @@ public class App {
 
         double aspectRatio = (double) imgWidth / imgHeight;
 
-        int imageWidth = maxSize;
+        int imageWidth = maxSize - 36;
         int imageHeight = (int)((double)imgHeight/aspectRatio);
 
         if(imageHeight > maxSize - 72) {
