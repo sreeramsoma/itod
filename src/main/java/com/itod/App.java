@@ -2,12 +2,18 @@ package com.itod;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.commons.io.FilenameUtils;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 
 public class App {
     public static void main(String[] args) {
@@ -32,14 +38,17 @@ public class App {
                         String title = getTitleFromFilename(file.getName());
                         System.out.println("Adding title -" + title);
                         addTitleToDocument(doc, title);
-                        XWPFParagraph paragraph = doc.createParagraph();
+
+                     /*    XWPFParagraph paragraph = doc.createParagraph();
                         XWPFRun run = paragraph.createRun();
                         run.addBreak();
                         System.out.println("Adding image");
 
                         try (FileInputStream is = new FileInputStream(file)) {
                             run.addPicture(is, getPictureType(file), file.getName(), Units.toEMU(500), Units.toEMU(500)); // Adjust image size as needed
-                        }
+                        }*/
+
+                        addPicture(doc, file);
                         addPageBreak(doc);
                         System.out.println("Adding page break");
                     }
@@ -53,6 +62,37 @@ public class App {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static void addPicture(XWPFDocument document, File file) throws IOException, InvalidFormatException{
+        XWPFParagraph paragraph = document.createParagraph();
+        XWPFRun run = paragraph.createRun();
+
+            // Page dimensions
+      //  int pageWidth = (int) (8.5 * 72); // assuming 8.5 inch width page
+      //  int offset = 50; // offset in points
+        int maxSize = 8*72;
+
+            // Read the image dimensions
+        BufferedImage bimg = ImageIO.read(file);
+        int imgWidth = bimg.getWidth();
+        int imgHeight = bimg.getHeight();
+
+        double aspectRatio = (double) imgWidth / imgHeight;
+
+        int imageWidth = maxSize;
+        int imageHeight = (int)((double)imgHeight/aspectRatio);
+
+        if(imageHeight > maxSize - 72) {
+            imageHeight = maxSize - 72;
+            imageWidth = (int)(aspectRatio*imageHeight);
+        }
+
+        // Add the image to the document
+        try (FileInputStream is = new FileInputStream(file)) {
+            run.addPicture(is, getPictureType(file), file.getName(), Units.toEMU(imageWidth), Units.toEMU(imageHeight)); // Adjust image size as needed
+        }
+
     }
 
     private static void addTitleToDocument(XWPFDocument document, String title) {
